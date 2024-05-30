@@ -1,0 +1,22 @@
+CREATE TABLE skaters
+(id SERIAL,
+ email VARCHAR(50) NOT NULL,
+ nombre VARCHAR(25) NOT NULL,
+ password VARCHAR(25) NOT NULL,
+ anos_experiencia INT NOT NULL,
+ especialidad VARCHAR(50) NOT NULL,
+ foto VARCHAR(255) NOT NULL,
+ estado BOOLEAN NOT NULL);
+
+Requerimientos
+
+1. Crear una API REST con el Framework Express (3 Puntos)
+
+2. Servir contenido dinámico con express-handlebars (3 Puntos)
+
+3. Ofrecer la funcionalidad Upload File con express-fileupload (2 Puntos)
+
+4. Implementar seguridad y restricción de recursos o contenido con JWT (2 Puntos)
+
+
+¡Mucho éxito!
