@@ -4,9 +4,28 @@ import pool from "../database/connection.js";
 import jwt from "jsonwebtoken";
 const secret = process.env.SECRET;
 
+
+// 0.- funciones
+
+// verifica usuario y devuelve token
+
+const verificar = async (email, password) => {
+
+  const verificado = await pool.query('SELECT * FROM skaters WHERE email = $1 AND password = $2', [email, password]);
+  if (verificado) {
+    const { sub, name } = { email, password };
+    const token = jwt.sign({
+      sub,
+      name,
+      exp: Date.now() + 120 * 1000
+    }, secret);
+    return token;
+  }
+}
+
 // 1.- gets
 
-export const listar = async (req, res) => {
+export const listar = async (_, res) => {
   try {
     const results = await pool.query('SELECT * FROM skaters')
     const result = results.rows;
@@ -22,7 +41,10 @@ export const acceder = async (req, res) => {
   const { email, password } = req.body;
   try {
     const token = await verificar(email, password)
-    console.log(token);
+    if (!token) {
+      alert('Usuario no registrado')
+      res.status(404).redirect('/')
+    }
     const payload = jwt.verify(token, secret)
     if (Date.now() > payload.exp) {
       res.status(401).send('Token expirado')
@@ -46,22 +68,4 @@ export const agregar = async (req, res) => {
   catch (err) {
     res.status(500).json({ message: err.message });
   }
-};
-
-// 3.- funciones
-
-// verifica usuario y devuelve token
-
-const verificar = async (email, password) => {
-
-  const verificado = await pool.query('SELECT * FROM skaters WHERE email = $1 AND password = $2', [email, password]);
-  if (verificado) {
-    const { sub, name } = { email, password };
-    const token = jwt.sign({
-      sub,
-      name,
-      exp: Date.now() + 120 * 1000
-    }, secret);
-    return token;
-  }
-};
+}
